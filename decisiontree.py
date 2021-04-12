@@ -1,0 +1,185 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "decisiontree.py",
+      "provenance": [],
+      "collapsed_sections": [],
+      "authorship_tag": "ABX9TyM+TnHfgKWtifs+t6GMNk1X",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/mhmdhsym/DataMining/blob/main/decisiontree.py\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "PlGwio6953Kn"
+      },
+      "source": [
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "from sklearn import tree"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "66njvBQS88rT"
+      },
+      "source": [
+        "irisDataset = pd.read_csv('Iris.csv',delimiter=',', header=0)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "lVnJwf0c95zP"
+      },
+      "source": [
+        "irisDataset[\"Species\"] = pd.factorize(irisDataset.Species)[0]"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ckxbu-dFJX1k"
+      },
+      "source": [
+        "irisDataset = irisDataset.drop(labels=\"Id\", axis=1)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "8n3WWhCJJZfv"
+      },
+      "source": [
+        "irisDataset = irisDataset.to_numpy()"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "kwApoKO1_z81"
+      },
+      "source": [
+        "dataTraining = np.concatenate((irisDataset[0:40,:],\n",
+        "                               irisDataset[50:90,:]), axis=0)\n",
+        "dataTesting = np.concatenate((irisDataset[40:50,:],\n",
+        "                               irisDataset[90:100,:]), axis=0)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "J-APTOUFA11n"
+      },
+      "source": [
+        "inputTraining = dataTraining[:,0:4]\n",
+        "inputTesting = dataTesting[:,0:4]\n",
+        "labelTraining = dataTraining[:,4]\n",
+        "labelTesting = dataTesting[:,4]"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "c8_pPeNABz0N"
+      },
+      "source": [
+        "model = tree.DecisionTreeClassifier()\n",
+        "model = model.fit(inputTraining, labelTraining)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "eAUqEemlCAs4",
+        "outputId": "d0ad7e1f-3d7a-4ed4-fafc-0bf2580a4b45"
+      },
+      "source": [
+        "hasilPrediksi = model.predict(inputTesting)\n",
+        "print(\"label sebenarnya \", labelTesting)\n",
+        "print(\"hasil Prediksi: \", hasilPrediksi)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "label sebenarnya  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]\n",
+            "hasil Prediksi:  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "P-jehGThCTeG",
+        "outputId": "b323db80-e25d-48d9-fca8-f79f93c40ca4"
+      },
+      "source": [
+        "prediksiBenar = (hasilPrediksi == labelTesting).sum()\n",
+        "prediksiSalah = (hasilPrediksi != labelTesting).sum()\n",
+        "print(\"Prediksi Benar : \", prediksiBenar, \" data\")\n",
+        "print(\"Prediksi salah : \", prediksiSalah, \" data\")\n",
+        "print(\"akurasi: \", prediksiBenar/(prediksiBenar+prediksiSalah)\n",
+        "      * 100, \"%\")"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Prediksi Benar :  20  data\n",
+            "Prediksi salah :  0  data\n",
+            "akurasi:  100.0 %\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    }
+  ]
+}
